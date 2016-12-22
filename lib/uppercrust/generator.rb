@@ -14,7 +14,7 @@ module Uppercrust
 
       files = read_files(path, base_only)
       if files.length > 0
-        FileUtils.mkdir("output")
+        FileUtils.mkdir_p("output")
         output = []
         files.each do |generate|
           puts "Generate #{generate.file_name}"

@@ -1,0 +1,29 @@
+{
+  "id": "Application",
+  "title": "Application Schema",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "description": "id of application",
+      "type": "string"
+    },
+    "jobId": {
+      "description": "id of job for application",
+      "type": "string"
+    },
+    "legacyApplicationId": {
+      "description": "legacy id of application",
+      "type": "string"
+    },
+    "log": {
+      "description": "logs of updates to application",
+      "type": "array",
+      "items": { "$ref": "applicationLog.json" }
+    },
+    "candidateId": {
+      "description": "user id of applicant",
+      "type": "string"
+    }
+  },
+  "required": []
+}

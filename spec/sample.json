@@ -1,0 +1,28 @@
+{
+  "id": "Tags",
+  "title": "MessageTags Schema",
+  "type": "object",
+  "properties": {
+    "jobs": {
+      "type": "array",
+      "items": { "$ref": "/job.json" }
+    },
+    "applications": {
+      "type": "array",
+      "items": { "$ref": "/application.json" }
+    },
+    "applicationStatus": {
+      "type": "string"
+    },
+    "employerName": {
+      "type": "string"
+    },
+    "position": {
+      "type": "string"
+    },
+    "locationCity": {
+      "type": "string"
+    }
+  },
+  "required": []
+}

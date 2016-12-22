@@ -1,8 +1,11 @@
+require 'pathname'
+
 class Parser
 
   attr_accessor :file_name
 
   def initialize(file_name, data, base_only)
+
     @file_name = file_name
     @data = data
     @base_only = base_only
@@ -57,7 +60,6 @@ class Parser
         contains << "#import \"_#{self.snake_to_camel(Pathname.new(type_info['items']['$ref']).basename('.json').to_s)}.h\""
       end
     end
-
     contains
   end
 
@@ -67,7 +69,7 @@ class Parser
     properties.each do |name, type_info|
       if self.match_type(type_info['type']) == 'NSArray' && type_info['items']['$ref'] != nil
         extends = type_info['items']['$ref'] != '#' ? self.snake_to_camel(Pathname.new(type_info['items']['$ref']).basename('.json').to_s) : @generated_class
-        array_converters << "+ (NSValueTransformer *)#{name}JSONTransformer {\n    return [NSValueTransformer mtl_JSONDictionaryTransformerWithModelClass:_#{extends}.class];\n}"
+        array_converters << "+ (NSValueTransformer *)#{name}JSONTransformer {\n    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:_#{extends}.class];\n}"
       end
     end
 

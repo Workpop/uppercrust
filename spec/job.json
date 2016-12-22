@@ -1,0 +1,46 @@
+{
+  "id": "Job",
+  "title": "Job Schema",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "description": "id of job",
+      "type": "string"
+    },
+    "description": {
+      "properties": {
+        "position": {
+          "type": "string"
+        }
+      }
+    },
+    "employer": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "location": {
+          "properties": {
+            "city": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            },
+            "state_code": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "hiringManager": {
+      "properties": {
+        "_id": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": []
+}
