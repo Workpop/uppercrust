@@ -3,7 +3,7 @@ require 'pathname'
 class Parser
 
   attr_accessor :file_name
-
+  
   def initialize(file_name, data, base_only)
 
     @file_name = file_name
@@ -27,6 +27,7 @@ class Parser
                                                        :class_name => @generated_class,
                                                        :extends_class => @extends_class,
                                                        :import => @import,
+                                                       :contains => @contains_classes,
                                                        :description => @data['description'],
                                                        :properties => @properties)
 
@@ -34,7 +35,6 @@ class Parser
                                                        :class_name => @generated_class,
                                                        :properties => @variable_names,
                                                        :extends => !@import.nil?,
-                                                       :contains => @contains_classes,
                                                        :array_converters => @array_converters)
 
     unless @base_only
@@ -59,8 +59,12 @@ class Parser
       if self.match_type(type_info['type']) == 'NSArray' && type_info['items']['$ref'] != nil && type_info['items']['$ref'] != '#'
         contains << "#import \"_#{self.snake_to_camel(Pathname.new(type_info['items']['$ref']).basename('.json').to_s)}.h\""
       end
+      
+      if self.match_type(type_info['type']) == 'NSObject' && type_info['$ref'] != nil && type_info['$ref'] != '#'
+          contains << "#import \"_#{self.snake_to_camel(Pathname.new(type_info['$ref']).basename('.json').to_s)}.h\""
+      end
     end
-    contains
+    contains.uniq
   end
 
   def get_array_converters(properties)
@@ -69,7 +73,12 @@ class Parser
     properties.each do |name, type_info|
       if self.match_type(type_info['type']) == 'NSArray' && type_info['items']['$ref'] != nil
         extends = type_info['items']['$ref'] != '#' ? self.snake_to_camel(Pathname.new(type_info['items']['$ref']).basename('.json').to_s) : @generated_class
-        array_converters << "+ (NSValueTransformer *)#{name}JSONTransformer {\n    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:_#{extends}.class];\n}"
+        array_converters << "+ (NSValueTransformer *)#{name}JSONTransformer\n{\n    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:_#{extends}.class];\n}\n"
+      end
+      
+      if self.match_type(type_info['type']) == 'NSObject' && type_info['$ref'] != nil
+          extends = type_info['$ref'] != '#' ? self.snake_to_camel(Pathname.new(type_info['$ref']).basename('.json').to_s) : @generated_class
+          array_converters << "+ (NSValueTransformer *)#{name}JSONTransformer\n{\n    return [NSValueTransformer mtl_JSONDictionaryTransformerWithModelClass:_#{extends}.class];\n}\n"
       end
     end
 
@@ -116,7 +125,13 @@ class Parser
 
     properties.each do |name, type_info|
       type = match_type(type_info['type'])
-      extracted_properties << "@property(#{self.copy_type(type) ? 'copy' : 'assign'}, nonatomic, readonly) #{type} #{self.copy_type(type) ? '*' : ''}#{name};"
+      
+      if self.match_type(type_info['type']) == 'NSObject' && type_info['$ref'] != nil
+          extends = type_info['$ref'] != '#' ? self.snake_to_camel(Pathname.new(type_info['$ref']).basename('.json').to_s) : @generated_class
+          extracted_properties << "@property(#{self.copy_type(type) ? 'copy' : 'assign'}, nonatomic, readonly) _#{extends} #{self.copy_type(type) ? '*' : ''}#{name};"
+      else
+        extracted_properties << "@property(#{self.copy_type(type) ? 'copy' : 'assign'}, nonatomic, readonly) #{type} #{self.copy_type(type) ? '*' : ''}#{name};"
+      end
     end
 
     extracted_properties
@@ -148,7 +163,8 @@ class Parser
   end
 
   def snake_to_camel(file_name)
-    (file_name.split('_').length > 1) ? file_name.split('_').map { |w| w.capitalize }.join('') : file_name.capitalize
+      prefix = "WP"
+    (file_name.split('_').length > 1) ? file_name.split('_').map { |w| w.capitalize }.join('') : prefix+file_name.capitalize
   end
 
 end
