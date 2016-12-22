@@ -126,9 +126,11 @@ class Parser
     properties.each do |name, type_info|
       type = match_type(type_info['type'])
       
-      if self.match_type(type_info['type']) == 'NSObject' && type_info['$ref'] != nil
+      if type == 'NSObject' && type_info['$ref'] != nil
           extends = type_info['$ref'] != '#' ? self.snake_to_camel(Pathname.new(type_info['$ref']).basename('.json').to_s) : @generated_class
           extracted_properties << "@property(#{self.copy_type(type) ? 'copy' : 'assign'}, nonatomic, readonly) _#{extends} #{self.copy_type(type) ? '*' : ''}#{name};"
+      elsif type == 'NSString' && type_info['format'] == 'date-time'
+        extracted_properties << "@property(strong, nonatomic, readonly) NSDate *#{name};"
       else
         extracted_properties << "@property(#{self.copy_type(type) ? 'copy' : 'assign'}, nonatomic, readonly) #{type} #{self.copy_type(type) ? '*' : ''}#{name};"
       end
