@@ -4,13 +4,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'uppercrust/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "uppercrust"
+  spec.name          = "wp-uppercrust"
   spec.version       = Uppercrust::VERSION
-  spec.authors       = ["Jan Gorman"]
-  spec.email         = ["gorman.jan@gmail.com"]
+  spec.authors       = ["Workpop"]
+  spec.email         = ["tech@workpop.com"]
   spec.summary       = %q{Convert your JSON schema files to Mantle compatible Objective-C models}
   spec.description   = %q{Convert your JSON schema files to Mantle compatible Objective-C models}
-  spec.homepage      = "https://github.com/JanGorman/uppercrust/"
+  spec.homepage      = "https://github.com/Workpop/uppercrust"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
