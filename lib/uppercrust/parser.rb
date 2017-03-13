@@ -57,11 +57,11 @@ class Parser
 
     properties.each do |name, type_info|
       if self.match_type(type_info['type']) == 'NSArray' && type_info['items']['$ref'] != nil && type_info['items']['$ref'] != '#'
-        contains << "#import \"_#{self.snake_to_camel(Pathname.new(type_info['items']['$ref']).basename('.json').to_s)}.h\""
+        contains << "#import \"#{self.snake_to_camel(Pathname.new(type_info['items']['$ref']).basename('.json').to_s)}.h\""
       end
       
       if self.match_type(type_info['type']) == 'NSObject' && type_info['$ref'] != nil && type_info['$ref'] != '#'
-          contains << "#import \"_#{self.snake_to_camel(Pathname.new(type_info['$ref']).basename('.json').to_s)}.h\""
+          contains << "#import \"#{self.snake_to_camel(Pathname.new(type_info['$ref']).basename('.json').to_s)}.h\""
       end
     end
     contains.uniq
@@ -73,12 +73,12 @@ class Parser
     properties.each do |name, type_info|
       if self.match_type(type_info['type']) == 'NSArray' && type_info['items']['$ref'] != nil
         extends = type_info['items']['$ref'] != '#' ? self.snake_to_camel(Pathname.new(type_info['items']['$ref']).basename('.json').to_s) : @generated_class
-        array_converters << "+ (NSValueTransformer *)#{name}JSONTransformer\n{\n    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:_#{extends}.class];\n}\n"
+        array_converters << "+ (NSValueTransformer *)#{name}JSONTransformer\n{\n    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:#{extends}.class];\n}\n"
       end
       
       if self.match_type(type_info['type']) == 'NSObject' && type_info['$ref'] != nil
           extends = type_info['$ref'] != '#' ? self.snake_to_camel(Pathname.new(type_info['$ref']).basename('.json').to_s) : @generated_class
-          array_converters << "+ (NSValueTransformer *)#{name}JSONTransformer\n{\n    return [NSValueTransformer mtl_JSONDictionaryTransformerWithModelClass:_#{extends}.class];\n}\n"
+          array_converters << "+ (NSValueTransformer *)#{name}JSONTransformer\n{\n    return [NSValueTransformer mtl_JSONDictionaryTransformerWithModelClass:#{extends}.class];\n}\n"
       end
     end
 
@@ -128,7 +128,7 @@ class Parser
       
       if type == 'NSObject' && type_info['$ref'] != nil
           extends = type_info['$ref'] != '#' ? self.snake_to_camel(Pathname.new(type_info['$ref']).basename('.json').to_s) : @generated_class
-          extracted_properties << "@property(#{self.copy_type(type) ? 'copy' : 'assign'}, nonatomic) _#{extends} #{self.copy_type(type) ? '*' : ''}#{name};"
+          extracted_properties << "@property(#{self.copy_type(type) ? 'copy' : 'assign'}, nonatomic) #{extends} #{self.copy_type(type) ? '*' : ''}#{name};"
       elsif type == 'NSString' && type_info['format'] == 'date-time'
         extracted_properties << "@property(strong, nonatomic) NSDate *#{name};"
       else
