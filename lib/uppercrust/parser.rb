@@ -164,9 +164,12 @@ class Parser
     end
   end
 
+  def upcase_first_letter(s):
+    return s[:1].upper() + s[1:]
+
   def snake_to_camel(file_name)
       prefix = "WP"
-    (file_name.split('_').length > 1) ? file_name.split('_').map { |w| w.capitalize }.join('') : prefix+file_name.capitalize
+    (file_name.split('_').length > 1) ? file_name.split('_').map { |w| upcase_first_letter(w) }.join('') : prefix+upcase_first_letter(file_name)
   end
 
 end
