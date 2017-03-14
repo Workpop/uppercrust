@@ -166,7 +166,7 @@ class Parser
   
   def snake_to_camel(file_name)
       prefix = "WP"
-    (file_name.split('_').length > 1) ? file_name.split('_').map { |w| w.capitalize.gsub(/_(\w)/){$1.upcase} }.join('') : prefix+file_name.capitalize.gsub(/_(\w)/){$1.upcase}
+    (file_name.split('_').length > 1) ? file_name.split('_').map { |w| w }.join('') : prefix+file_name
   end
 
 end
